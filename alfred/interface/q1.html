@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfred</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Alfred</div>
+
+        <div class="question-card">
+            <h1>Are you setting Alfred up at home or at work?</h1>
+
+            <div class="button-group">
+                <button class="choice-btn" data-value="home">At home</button>
+                <button class="choice-btn" data-value="work">At work</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.choice-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const contextType = btn.dataset.value;
+                try {
+                    const response = await fetch('/q2', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ context_type: contextType })
+                    });
+                    if (response.ok) {
+                        const html = await response.text();
+                        document.body.innerHTML = html;
+                    } else {
+                        alert('Error: ' + response.statusText);
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

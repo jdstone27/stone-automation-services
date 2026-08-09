@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfred</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Alfred</div>
+
+        <div class="question-card">
+            <h1>What's one thing you do every day that feels like a waste of your time?</h1>
+
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="painPoint"
+                    placeholder="Describe it in your own words."
+                    autofocus
+                >
+                <button id="submitBtn" class="submit-btn">Next</button>
+            </div>
+            <div id="error" class="error"></div>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('painPoint');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorDiv = document.getElementById('error');
+
+        submitBtn.addEventListener('click', submit);
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submit();
+        });
+
+        async function submit() {
+            const painPoint = input.value.trim();
+            if (painPoint.split(/\s+/).length < 3) {
+                errorDiv.textContent = 'Tell me a little more.';
+                return;
+            }
+
+            try {
+                const response = await fetch('/q3', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pain_point: painPoint })
+                });
+
+                if (response.ok) {
+                    const html = await response.text();
+                    document.body.innerHTML = html;
+                } else {
+                    const data = await response.json();
+                    errorDiv.textContent = 'Error: ' + (data.error || response.statusText);
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

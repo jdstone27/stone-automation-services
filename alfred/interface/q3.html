@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfred</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Alfred</div>
+
+        <div class="question-card">
+            <h1>Last thing. What's your name?</h1>
+
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="userName"
+                    placeholder="First name only."
+                    autofocus
+                >
+                <button id="submitBtn" class="submit-btn">Next</button>
+            </div>
+            <div id="error" class="error"></div>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('userName');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorDiv = document.getElementById('error');
+
+        submitBtn.addEventListener('click', submit);
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submit();
+        });
+
+        async function submit() {
+            const userName = input.value.trim();
+            if (!userName) {
+                errorDiv.textContent = 'Please enter your name.';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Give me a moment...';
+
+            try {
+                const response = await fetch('/finalize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_name: userName })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Redirect to completion page
+                    window.location.href = '/completion?name=' + encodeURIComponent(userName);
+                } else {
+                    const data = await response.json();
+                    errorDiv.textContent = 'Error: ' + (data.error || response.statusText);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Next';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Error: ' + error.message;
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Next';
+            }
+        }
+    </script>
+</body>
+</html>
