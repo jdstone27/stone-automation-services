@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.venv-dev/
+.pytest_cache/
+
+# Secrets and local state — never commit
+.env
+apps/appliance/data/
+
+# OS
+.DS_Store
