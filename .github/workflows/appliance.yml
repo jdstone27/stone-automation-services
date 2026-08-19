@@ -1,8 +1,11 @@
 name: appliance
 
+# Why: push is limited to main. A branch with an open PR would otherwise run
+# this workflow twice for the same commit — once for the push, once for the
+# pull_request event.
 on:
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
 
 jobs:
