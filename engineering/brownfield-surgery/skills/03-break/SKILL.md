@@ -1,4 +1,6 @@
 ---
+name: 03-break
+description: 'Phase 03 of brownfield surgery: select and rank the incision points where the change will enter the system, derived from the seam map only. No production-code edits.'
 skill_name: 03-break
 version: 1.0.0
 last_updated: 2026-08-20

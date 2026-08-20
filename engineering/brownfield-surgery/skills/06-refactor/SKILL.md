@@ -1,4 +1,6 @@
 ---
+name: 06-refactor
+description: 'Phase 06 of brownfield surgery: behavior-preserving cleanup inside the surgical field only. No drive-by fixes outside the field.'
 skill_name: 06-refactor
 version: 1.0.0
 last_updated: 2026-08-20

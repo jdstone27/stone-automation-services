@@ -1,4 +1,6 @@
 ---
+name: 05-implement
+description: 'Phase 05 of brownfield surgery: make the smallest change that satisfies the plan, at the chosen incision points, on branch surgery/<date>, with the characterization tests green.'
 skill_name: 05-implement
 version: 1.0.0
 last_updated: 2026-08-20

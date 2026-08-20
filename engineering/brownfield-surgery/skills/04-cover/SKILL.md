@@ -1,4 +1,6 @@
 ---
+name: 04-cover
+description: 'Phase 04 of brownfield surgery: write characterization tests pinning current behavior at the incision points BEFORE touching production code. Gates on measurable coverage improvement or stops the surgery.'
 skill_name: 04-cover
 version: 1.0.0
 last_updated: 2026-08-20

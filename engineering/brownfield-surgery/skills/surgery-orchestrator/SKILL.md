@@ -1,4 +1,6 @@
 ---
+name: surgery-orchestrator
+description: 'Run a change to a legacy or brownfield codebase through seven human-gated phases in strict order, each writing an artifact the next phase reads. Use when starting brownfield surgery, modifying legacy or unfamiliar code safely, or when asked to run the surgery workflow.'
 skill_name: surgery-orchestrator
 version: 1.0.0
 last_updated: 2026-08-20

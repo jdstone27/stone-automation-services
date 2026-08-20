@@ -1,4 +1,6 @@
 ---
+name: 01-plan
+description: 'Phase 01 of brownfield surgery: define the surgical target, the surgical field, what must NOT change, success criteria, risks and rollback. Zero code edits; halts for human approval.'
 skill_name: 01-plan
 version: 1.0.0
 last_updated: 2026-08-20

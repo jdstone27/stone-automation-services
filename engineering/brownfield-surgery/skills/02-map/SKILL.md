@@ -1,4 +1,6 @@
 ---
+name: 02-map
+description: 'Phase 02 of brownfield surgery: trace inputs, processes, outputs and testable seams around the surgical target and produce the seam map. Read-only, zero code edits.'
 skill_name: 02-map
 version: 1.0.0
 last_updated: 2026-08-20

@@ -1,4 +1,6 @@
 ---
+name: 07-finish
+description: 'Phase 07 of brownfield surgery: open the pull request carrying before/after coverage, full test results, invariants verified and outstanding follow-ups. A human merges.'
 skill_name: 07-finish
 version: 1.0.0
 last_updated: 2026-08-20
