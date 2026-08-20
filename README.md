@@ -1,37 +1,67 @@
 # company-skills-library
 
-A "thin agent, thick skill" library. Task logic lives in versioned Markdown SOPs;
-agents stay generic. Change how work gets done by editing a skill file and merging a
-PR — not by rewriting an agent.
+One skill set, proven end to end: repo → plugin → skill → Hermes sync. Task logic
+lives in versioned Markdown SOPs; agents stay generic. Change how work gets done by
+editing a file and merging a PR — not by rewriting an agent.
+
+v1 ships **one plugin**: `brownfield-surgery`. Everything else waits until the
+pipeline is validated on a live rig.
 
 ## Layout
 
 ```
 company-skills-library/
 ├── .claude-plugin/marketplace.json
-├── CODEOWNERS
 ├── README.md
-├── content/youtube-publish/
-│   ├── .claude-plugin/plugin.json
-│   ├── skills/{title-generation, thumbnail-brief, description-writing, youtube-orchestrator}.md
-│   └── hooks/{hooks.json, track-usage.sh}
 └── engineering/brownfield-surgery/
     ├── .claude-plugin/plugin.json
     └── skills/{surgery-orchestrator, 01-plan, 02-map, 03-break, 04-cover, 05-implement, 06-refactor, 07-finish}.md
 ```
 
-## Plugins in v1
+## brownfield-surgery
 
-| Plugin | Path | What it does |
+Modifying a legacy system through seven phases, in order, each ending at a human
+gate, each writing an artifact the next phase reads instead of re-deriving.
+
+| Phase | Does | Artifact |
 | --- | --- | --- |
-| `youtube-publish` | `content/youtube-publish` | Title options → thumbnail brief → description, assembled into one human review package. |
-| `brownfield-surgery` | `engineering/brownfield-surgery` | Seven human-gated phases for modifying a legacy system. Template: [brownfield-code-surgeon](https://github.com/vivganes/brownfield-code-surgeon). |
+| `01-plan` | Surgical target, what must NOT change, success criteria | `plan.md` |
+| `02-map` | Trace inputs/processes/outputs/seams. Zero code edits | `seam-map.md` |
+| `03-break` | Pick incision points, from the seam map only | `incision-points.md` |
+| `04-cover` | Characterization tests **before** touching code | `coverage-before.md` + tests |
+| `05-implement` | The change, on `surgery/<date>` | `change-log.md` |
+| `06-refactor` | Cleanup inside the surgical field only | `refactor-notes.md` |
+| `07-finish` | PR with before/after coverage, results, summary | the PR |
+
+`surgery-orchestrator` sequences the phases and enforces the gates. It holds no
+engineering technique — that lives in the phase SOPs.
+
+Two hard gates: **04** stops the surgery outright if coverage at the incision points
+does not measurably improve, and **07** never merges — a human does.
+
+Forbidden in every phase: no commits to `main`, no edits outside the surgical field,
+no deleting or weakening tests to pass a gate.
+
+Adapted from [brownfield-code-surgeon](https://github.com/vivganes/brownfield-code-surgeon).
 
 ## Install
 
 In Claude Code: `/plugin` → Marketplace → add this repository → install
-`youtube-publish` and/or `brownfield-surgery`. Enable auto-update so rigs pick up
-merged SOP changes.
+`brownfield-surgery`. Enable auto-update so rigs pick up merged SOP changes.
+
+## Hermes rig setup
+
+```bash
+cd ~/.hermes
+git clone git@github.com:your-org/company-skills-library.git skills
+crontab -l | { cat; echo '*/15 * * * * cd ~/.hermes/skills && git pull --ff-only'; } | crontab -
+```
+
+- `--ff-only` is mandatory. Divergence on a live rig fails loudly instead of silently
+  merging.
+- Rollback is `git revert` on the repo; cron propagates the revert within 15 minutes.
+- Keep volatile data — run counts, dates, session state — in `MEMORY.md`, never in
+  skill files. Skills live in the cached prompt tier and must stay stable.
 
 ## Skill conventions
 
@@ -49,36 +79,22 @@ a skill that wants to change itself commits to `proposal/<skill>-<date>` and ope
 PR. **Nothing pushes to `main`** — cron propagates `main` to every rig within 15
 minutes, so an unreviewed push is a fleet-wide change.
 
-## Hermes rig setup
+## Acceptance checklist
 
-```bash
-cd ~/.hermes
-git clone git@github.com:your-org/company-skills-library.git skills
-crontab -l | { cat; echo '*/15 * * * * cd ~/.hermes/skills && git pull --ff-only'; } | crontab -
-```
-
-- `--ff-only` is mandatory. Divergence on a production rig fails loudly instead of
-  silently merging.
-- Rollback is `git revert` on the repo; cron propagates the revert within 15 minutes.
-- Keep volatile data — run counts, dates, session state — in `MEMORY.md`, never in
-  skill files. Skills live in the cached prompt tier and must stay stable.
-
-## Ownership
-
-`CODEOWNERS` routes `/content/` to `@content-team` and `/engineering/` to `@eng-team`.
-Proposal PRs land on the owning team.
-
-## Usage tracking
-
-`youtube-publish` registers a `PreToolUse` hook on `Skill` that appends one JSON line
-per invocation to `usage-log.jsonl` inside the plugin root. The log is generated at
-runtime and is not committed.
+- [ ] Repo matches the tree above; plugin installs via `/plugin` → Marketplace
+- [ ] A real surgery runs end to end on Hermes and produces a PR with coverage evidence
+- [ ] Cron pulls a test commit within 15 min
+- [ ] Self-improvement loop produces a `proposal/` branch, never a commit on `main`
 
 ## Note on skill file layout
 
-This repo follows the build spec's flat layout: one `.md` file per skill directly under
-each plugin's `skills/` directory. Claude Code's own skill loader discovers skills as
-`skills/<skill-name>/SKILL.md` with `name` and `description` frontmatter. If these
-skills need to be auto-discovered by Claude Code rather than read as SOP documents,
-move each `skills/<name>.md` to `skills/<name>/SKILL.md` and add `name` and
-`description` keys to the frontmatter; no body content changes.
+Skills are flat `.md` files under `skills/`. Claude Code's own loader discovers skills
+as `skills/<skill-name>/SKILL.md` with `name` and `description` frontmatter. If these
+need to be auto-discovered rather than read as SOP documents, move each
+`skills/<name>.md` to `skills/<name>/SKILL.md` and add `name` and `description` keys;
+no body content changes.
+
+## Deferred to v1.1
+
+`youtube-publish` and its skills (dropped from v1 — not in use), CODEOWNERS,
+usage-tracking hooks.
