@@ -1,0 +1,7 @@
+{
+  "name": "youtube-publish",
+  "version": "1.0.0",
+  "author": { "name": "Your Org" },
+  "skills": "./skills",
+  "hooks": "./hooks/hooks.json"
+}

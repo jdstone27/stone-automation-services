@@ -1,0 +1,8 @@
+{
+  "name": "company-skills-library",
+  "owner": { "name": "Your Org" },
+  "plugins": [
+    { "name": "youtube-publish", "source": "./content/youtube-publish", "description": "YouTube publication pipeline" },
+    { "name": "brownfield-surgery", "source": "./engineering/brownfield-surgery", "description": "Gated legacy modification workflow" }
+  ]
+}
